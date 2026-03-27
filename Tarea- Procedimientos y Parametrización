@@ -1,0 +1,16 @@
+void setup() {
+  size(800, 600);
+  background(250);
+}
+void draw() {
+  if (mousePressed) {
+    dibujarunpaisaje(mouseX, mouseY,100, 80); 
+  }
+}
+void dibujarunpaisaje(int X, int Y, int ancho, int alto) {
+  fill(100, 200, 100);
+  rect(X-100, Y, ancho, alto-60);
+  
+  fill(250,250,0);
+  circle(X - ancho/2, Y - alto/2, ancho/2);
+}
