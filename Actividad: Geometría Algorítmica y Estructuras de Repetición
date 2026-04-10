@@ -21,4 +21,3 @@ void draw() {
     line(0, height - (i * sepy), i * sepx, 0);
   }
 }
-//no se si funciona pues no tengo la aplicacion
