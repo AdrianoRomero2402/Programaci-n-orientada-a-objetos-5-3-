@@ -1,0 +1,27 @@
+int cantfil = 15;
+int cantcol = 9;
+
+void setup(){
+  size(900,600);
+boolean[][] fueCliqueado = new boolean[cantfil][cantcol];
+}
+  void draw(){
+    float ancho = width/cantcol;
+    float alto =height/cantfil;
+    for(int i=0; i < cantcol; i++){
+      for(int j=0; j < cantfil; j++){
+        float x = i*ancho;
+        float y = j*alto;
+        float limitederecho = x + ancho;
+        float limiteinf = y + alto; 
+        if((x < mouseX) && (mouseX < limitederecho) && (y < mouseY) && (mouseY < limiteinf)){
+          fuecliqueado[i][j]= true;
+        }
+        if(fuecliqueado[i][j]){
+          fill(0);
+        }else{
+          fill(255);
+        rect(x,y,ancho,alto);
+      }
+    }
+  }
