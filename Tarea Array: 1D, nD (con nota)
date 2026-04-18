@@ -1,0 +1,54 @@
+int colms = 10;
+int filas = 10;
+float[] alturas = new float[10];
+void setup(){
+  size(800,600);
+  background(0,0,0);
+}
+void draw(){
+  float ancho = width/colms;
+  for(int i=0; i<colms; i++){
+    float x =   i*ancho;
+    float alto = alturas[i];
+    float y = height-alto;
+    rect(x,y,ancho,alto);
+  }
+  int indice = mouseX / (width/colms);
+  alturas[indice] = height - mouseY;
+}
+ejercicio 2
+int filas = 15;
+int colms = 15;
+boolean[][][] laberinto = new boolean[filas][colms][6];
+void setup() {
+  size(800, 600);
+  for (int f = 0; f < filas; f++) {
+    for (int c = 0; c < colms; c++) {
+      for (int p = 0; p < 6; p++) {
+        laberinto[f][c][p] = random(1) > 0.7; 
+      }
+    }
+  }
+}
+void draw() {
+  background(255);
+  stroke(0); 
+  strokeWeight(2);
+  float anchoC = width / colms;
+  float altoC = height / filas;
+  for (int f = 0; f < filas; f++) {
+    for (int c = 0; c < colms; c++) {
+      float x = c * anchoC;
+      float y = f * altoC;
+      if (laberinto[f][c][0]) line(x, y, x + anchoC, y);           
+      if (laberinto[f][c][1]) line(x, y + altoC, x + anchoC, y + altoC); 
+      if (laberinto[f][c][2]) line(x, y, x, y + altoC);            
+      if (laberinto[f][c][3]) line(x + anchoC, y, x + anchoC, y + altoC); 
+      stroke(255, 0, 0);
+      if (laberinto[f][c][4]) line(x, y, x + anchoC, y + altoC);  
+      if (laberinto[f][c][5]) line(x + anchoC, y, x, y + altoC);  
+      stroke(0); 
+    }
+  }
+  noLoop(); 
+}
