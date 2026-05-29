@@ -1,0 +1,16 @@
+Movil [] moviles;
+int cant = 10;
+void setup(){
+  size(700,700);
+  moviles = new Movil [cant];
+  for(int i=0; i<cant; i++){
+    moviles[i] = new Movil (Random(width), Random(height));
+  }
+}
+void draw(){
+  println (framrate);
+  for(int i=0; i<cant; i++){
+    moviles[i] . mover();
+    moviles[i]. mostrar();
+  }
+}
