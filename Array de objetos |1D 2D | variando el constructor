@@ -62,4 +62,81 @@ class Movil {
     }
   }
 }
+
 ejercisio 2 
+primera pestaña
+int cols = 3;
+int filas = 2;
+float cW;
+float cH;
+Movil[][] estacionamiento; 
+void setup() {
+  size(800, 600);
+  cW = width / float(cols);
+  cH = height / float(filas);
+  estacionamiento = new Movil[cols][filas];
+  for(int x = 0; x < cols; x++){
+    for(int y = 0; y < filas; y++){
+      float posX = (x * cW) + (cW / 2);
+      float posY = (y * cH) + (cH / 2);
+      estacionamiento[x][y] = new Movil(y, x, posX, posY);
+    }
+  }
+}
+void draw() {
+  background(255);
+  dibujarGrilla();
+  for (int x = 0; x < cols; x++) {
+    for (int y = 0; y < filas; y++) {
+      estacionamiento[x][y].mover();
+      estacionamiento[x][y].mostrar();
+    }
+  }
+}
+void dibujarGrilla() {
+  stroke(200);
+  noFill();
+  for (int x = 0; x < cols; x++) {
+    for (int y = 0; y < filas; y++) {
+      rect(x * cW, y * cH, cW, cH);
+    }
+  }
+}
+
+segunda pestaña
+
+class Movil {
+  PVector pos, vel;
+  int r;
+  int fila;
+  int columna;
+  Movil(int f, int c, float x, float y) {
+    fila = f;
+    columna = c;
+    pos = new PVector(x, y);
+    vel = new PVector(random(-1, 1), random(-1, 1)); 
+    r = 40;
+  }
+  void mover() {
+    pos.add(vel);
+    contener();
+  }
+  void mostrar() {
+    fill(100, 150, 250);
+    stroke(0);
+    ellipse(pos.x, pos.y, r, r);
+    fill(0);
+    textAlign(CENTER, CENTER);
+    text("F:" + fila + " C:" + columna, pos.x, pos.y - 30);
+  }
+  void contener() {
+    if (pos.x < 0 || pos.x > width) {
+      pos.sub(vel);
+      vel.x = vel.x * -1;
+    }
+    if (pos.y < 0 || pos.y > height) {
+      pos.sub(vel);
+      vel.y = vel.y * -1;
+    }
+  }
+}
