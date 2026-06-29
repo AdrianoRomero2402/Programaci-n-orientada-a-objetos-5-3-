@@ -1,0 +1,11 @@
+bololean cs-w = false;
+void key Pressed(){
+  if (key == 'w' || key 'W')
+  is_w=true;
+}
+void key released(){
+  if(key=='w' || key 'W')
+  is_w=false;
+}
+void draw(){
+  if(is_w) jugador1.moverUP();
