@@ -40,3 +40,12 @@ void mousePressed(){
   bird.addFuerza(salto);
   }
 }
+pestaña 2
+boolean is_esc;
+void key pressed(){
+  if(keyCode == ESC){
+    is_esc=true;
+  }
+  if(is_esc==true){
+  
+}
