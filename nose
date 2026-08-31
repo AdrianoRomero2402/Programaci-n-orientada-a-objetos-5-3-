@@ -1,0 +1,14 @@
+  cuadrado sup, inf;
+  Dupla(PVector pos_m){
+    sup=new cuadrao(100,100);
+    inf=new cuadrado(100,100);
+  }
+  void mover(){
+    sup.mover();
+    inf.mover();
+  }
+  void mostrar(){
+    sup.mostrar();
+    inf.mostrar();
+  }
+}
