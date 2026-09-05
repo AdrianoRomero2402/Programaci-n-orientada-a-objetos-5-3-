@@ -1,216 +1,180 @@
-// --- PESTAÑA: Cuadrado ---
-class Cuadrado {
-  PVector pos;
-  float w, h;
-  
-  Cuadrado(float x, float y, float w, float h) {
-    this.pos = new PVector(x, y);
-    this.w = w;
-    this.h = h;
-  }
-  
-  void mostrar() {
-    rect(pos.x, pos.y, w, h);
-  }
-  
-  // Le pasamos un vector de velocidad para que sirva tanto para Flappy como para Pong
-  void mover(PVector velocidad) {
-    pos.add(velocidad);
-  }
-}
-// --- PESTAÑA: Circulo ---
-class Circulo {
-  PVector pos;
-  PVector vel;
-  float r; // radio
-  
-  Circulo(float x, float y, float r) {
-    this.pos = new PVector(x, y);
-    this.vel = new PVector(0, 0);
-    this.r = r;
-  }
-  
-  void mostrar() {
-    ellipse(pos.x, pos.y, r*2, r*2);
-  }
-  
-  void addFuerza(PVector fuerza) {
-    vel.add(fuerza);
-  }
-  
-  void mover() {
-    pos.add(vel);
-  }
-}
-// --- PESTAÑA: DuplaDeTubos ---
-class DuplaDeTubos {
-  Cuadrado tuboSup;
-  Cuadrado tuboInf;
-  float x;
-  float velocidad = -3; // Velocidad con la que los tubos van hacia la izquierda
-  
-  DuplaDeTubos(float posX) {
-    this.x = posX;
-    float anchoTubo = 50;
-    float espacioVacio = 150; // El hueco por donde pasa el pájaro
-    
-    // Calculamos alturas aleatorias
-    float altoSup = random(50, height - espacioVacio - 50);
-    float altoInf = height - altoSup - espacioVacio;
-    
-    // Instanciamos los dos Cuadrados
-    tuboSup = new Cuadrado(x, 0, anchoTubo, altoSup);
-    tuboInf = new Cuadrado(x, altoSup + espacioVacio, anchoTubo, altoInf);
-  }
-  
-  void mover() {
-    // Movemos ambos cuadrados al mismo tiempo
-    PVector velTubo = new PVector(velocidad, 0);
-    tuboSup.mover(velTubo);
-    tuboInf.mover(velTubo);
-    x += velocidad;
-  }
-  
-  void mostrar() {
-    // La clase delega el dibujo a los Cuadrados
-    tuboSup.mostrar();
-    tuboInf.mostrar();
-  }
-}
-// --- PESTAÑA PRINCIPAL ---
-
-// Constantes para la Máquina de Estados
 final int INICIO = 0;
 final int FLAPPY = 1;
 final int PONG = 2;
 final int GAME_OVER = 3;
-
 int estadoDelJuego = INICIO;
-
-// Variables de Flappy Bird
 ArrayList<DuplaDeTubos> tubos;
-Circulo bird;
+Pelota bird;
 float ultimoPar = 0; 
-PVector G = new PVector(0, 0.4); // Gravedad un poco más suave
-PVector salto = new PVector(0, -6); // Salto más fuerte
-
+PVector G = new PVector(0, 2); 
+PVector salto = new PVector(0, -999); 
 void setup() {
   size(800, 600);
   inicializarFlappy();
 }
-
 void draw() {
   background(0);
-  
-  // MÁQUINA DE ESTADOS
   if (estadoDelJuego == INICIO) {
-    pantallaInicio();
+    dibujarMenuInicio();
   } 
   else if (estadoDelJuego == FLAPPY) {
     jugarFlappy();
   } 
   else if (estadoDelJuego == PONG) {
-    // Acá iría la lógica de jugarPong();
-    background(50);
-    text("PONG EN CONSTRUCCIÓN", width/2, height/2);
+    jugarPong();
   } 
   else if (estadoDelJuego == GAME_OVER) {
-    pantallaGameOver();
+    dibujarGameOver();
   }
 }
-
-// --- PANTALLAS ---
-
-void pantallaInicio() {
-  textAlign(CENTER);
-  textSize(40);
+void dibujarMenuInicio() {
+  textAlign(CENTER, CENTER);
   fill(255);
-  text("MENÚ DE SELECCIÓN", width/2, 200);
-  
-  textSize(20);
-  text("Presiona 'F' para Flappy Bird", width/2, 300);
-  text("Presiona 'P' para Pong", width/2, 350);
+  textSize(45);
+  text("MENÚ PRINCIPAL", width / 2, height / 3);
+  textSize(22);
+  fill(0, 255, 0);
+  text("Presiona [ F ] para jugar a Flappy Bird", width / 2, height / 2);
+  fill(0, 200, 255);
+  text("Presiona [ P ] para jugar a Pong", width / 2, height / 2 + 50);
 }
-
-void pantallaGameOver() {
-  textAlign(CENTER);
-  textSize(40);
+void dibujarGameOver() {
+  textAlign(CENTER, CENTER);
+  textSize(50);
   fill(255, 0, 0);
-  text("GAME OVER", width/2, height/2);
+  text("GAME OVER", width / 2, height / 2 - 30);
   textSize(20);
   fill(255);
-  text("Presiona ESPACIO para volver al Menú", width/2, height/2 + 50);
+  text("Lisa It's Your Birthday, Happy Birthday, Lisa", width / 2, height / 2 + 40);
 }
-
-// --- LÓGICA DE FLAPPY BIRD ---
-
 void inicializarFlappy() {
   tubos = new ArrayList<DuplaDeTubos>();
-  bird = new Circulo(100, height/2, 15); 
+  bird = new Pelota(100, height / 2); 
   ultimoPar = millis();
 }
-
 void jugarFlappy() {
   agregarTubos(); 
-  
   bird.addFuerza(G); 
   bird.mover();
-  
-  borrarTubos(); 
-  
-  for(DuplaDeTubos t : tubos) {
+  for (int i = 0; i < tubos.size(); i++) {
+    DuplaDeTubos t = tubos.get(i);
     t.mover();
     t.mostrar(); 
   }
-  
   bird.mostrar();
-  
-  // Condición de derrota básica (toca el suelo o el techo)
   if (bird.pos.y > height || bird.pos.y < 0) {
     estadoDelJuego = GAME_OVER;
   }
 }
-
 void agregarTubos() { 
   float tActual = millis();
   float dt = tActual - ultimoPar; 
-  if (dt > 2000) { // Cada 2 segundos (2000 ms)
-    tubos.add(new DuplaDeTubos(width));
+  if (dt > 5000) { 
+    tubos.add(new DuplaDeTubos(new PVector(width, 0)));
     ultimoPar = tActual; 
   }
 }
-
-void borrarTubos() {
-  for (int i = tubos.size()-1; i >= 0; i--) { 
-    DuplaDeTubos aux = tubos.get(i);
-    if (aux.x < -50) { // Si salió de la pantalla
-      tubos.remove(i);   
-    }
-  }
+void jugarPong() {
+  textAlign(CENTER, CENTER);
+  textSize(30);
+  fill(255);
+  text("Pong", width / 2, height / 2 - 20);
+  textSize(18);
+  text("Presiona [ ESPACIO ] para volver al Menú", width / 2, height / 2 + 30);
+  Pelota p;
+int sep= 30;
+Paleta j1, j2;
+void otroBackground() {
+  fill(0, 30);
+  rect(0, 0, width, height);
 }
-
-// --- CONTROLES (Teclado y Mouse) ---
-
-void keyPressed() { // Ojo, sin espacios: keyPressed()
+void mostrarPuntaje() {
+  fill(255,15);
+  textSize(256);
+  textAlign(CENTER, CENTER);
+  text(j1.puntaje, width/3, height/2);
+  text(j2.puntaje, 2*width/3, height/2);
+}
+}
+void keyPressed() {
   if (estadoDelJuego == INICIO) {
     if (key == 'f' || key == 'F') {
-      inicializarFlappy(); // Resetea las variables antes de jugar
+      inicializarFlappy();
       estadoDelJuego = FLAPPY;
-    }
-    if (key == 'p' || key == 'P') {
+    } 
+    else if (key == 'p' || key == 'P') {
       estadoDelJuego = PONG;
     }
   } 
-  else if (estadoDelJuego == GAME_OVER) {
+  else if (estadoDelJuego == GAME_OVER || estadoDelJuego == PONG) {
     if (key == ' ') {
       estadoDelJuego = INICIO;
     }
   }
 }
-
 void mousePressed() {
   if (estadoDelJuego == FLAPPY) {
-    bird.vel.y = 0; // Frena la caída antes de aplicar el salto para que sea fluido
     bird.addFuerza(salto);
+  }
+}
+cuadrado
+class Cuadrado {
+  PVector pos;
+  PVector vel;
+  float w, h;
+  Cuadrado(float x, float y, float w, float h) {
+    this.pos = new PVector(x, y);
+    this.vel = new PVector(-3, 0);
+    this.w = w;
+    this.h = h;
+  }
+  void mover() {
+    pos.add(vel);
+  }
+  void mostrar() {
+    fill( 0,0  , 0);
+    rect(pos.x, pos.y, w, h);
+  }
+}
+duplatubos
+class DuplaDeTubos {
+  Cuadrado sup, inf; 
+  float anchoTubo = 50;
+  float espacioVacio = 150; 
+  DuplaDeTubos(PVector pos_m){
+    float altoSup = random(50, height - espacioVacio - 50);
+    float altoInf = height - altoSup - espacioVacio;
+    sup = new Cuadrado(pos_m.x, 0, anchoTubo, altoSup);
+    inf = new Cuadrado(pos_m.x, altoSup + espacioVacio, anchoTubo, altoInf);
+  }
+  void mover(){
+    sup.mover();
+    inf.mover();
+  }
+  void mostrar(){
+    sup.mostrar();
+    inf.mostrar();
+  }
+}
+pelota
+class Pelota {
+  PVector pos;
+  PVector vel;
+  float r;
+  Pelota(float x, float y) {
+    this.pos = new PVector(x, y);
+    this.vel = new PVector(0, 0); 
+    this.r = 14/*its your birdday*/; 
+  }
+    void mover() {
+    pos.add(vel);
+  }
+    void addFuerza(PVector fuerza) {
+    vel.add(fuerza);
+  }
+  void mostrar() {
+    fill(255, 255, 0);
+    noStroke();
+    ellipse(pos.x, pos.y, r * 2, r * 2);
   }
 }
