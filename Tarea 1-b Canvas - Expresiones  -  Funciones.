@@ -1,0 +1,40 @@
+void setup(){
+  size(1366, 688);
+  noLoop(); 
+}
+void draw(){
+  background(130, 200, 200);
+  fill(100, 200, 100);
+  rect(0, height*0.5, width, height*0.5); 
+  float centroY=height/2;
+  float margenX=width*0.1;
+  float margenY=height*0.1;
+  dibujarsol(width-margenX*1.5, margenY*1.5, width*0.15);
+  dibujarcasa(width*0.25, centroY, width*0.25, height*0.4);
+  dibujararbol(width*0.75,centroY+(height*0.1), width*0.15, height*0.4);
+}
+void dibujarsol(float x, float y, float tamano){
+  fill(250, 250, 0);
+  noStroke();
+  circle(x, y, tamano);
+}
+void dibujarcasa(float x, float y, float ancho, float alto){
+  stroke(0);
+  fill(200, 150, 100);
+  rect(x-ancho/2, y-alto/2, ancho, alto);
+  fill(200, 50, 50);
+  triangle(x-ancho/2, y-alto/2, x,y-alto*0.9, x+ancho/2, y-alto/2);  
+  fill(100, 50, 0);
+  float anchoP=ancho*0.5;
+  float altoP=alto*0.5;
+  rect(x-anchoP/2, y+alto/2-altoP, anchoP, altoP);
+}
+void dibujararbol(float x, float y, float ancho, float alto) {
+  stroke(0); 
+  fill(140, 20, 10);
+  float anchoT=ancho*0.3;
+  float altoT=alto*0.6;
+  rect(x-anchoT/2, y, anchoT, altoT); 
+  fill(30, 100, 30);
+  circle(x, y, ancho);
+}
